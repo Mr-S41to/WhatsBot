@@ -47,25 +47,43 @@ function waitForMessage(client, from) {
   });
 }
 
+function horioAtendimento() {
+  var now = new Date;
+  var hora = now.getHours();
+  var dia = now.getDay();
+
+  return hora >= 8 && hora < 18 && dia >= 1 && dia <= 5;
+}
+
 function start(client) {
   client.onMessage(async (message) => {
-    // Verifica se é a primeira interação com o cliente
-
-    if (!atendimentos[message.from]) {
-      await client.sendText(
-        message.from,
-        "Olá, aqui é a Luna, assistente comercial do Grupo Saint Paul.\nEm que posso ajudar?\n\n1️⃣ - Cessão de Direitos\n2️⃣ - Autorização para Escritura\n3️⃣ - Contratos\n4️⃣ - Unificação e Desmembramento de Lotes\n5️⃣ - Aditivos e Notas Devolutivas\n6️⃣ - Outros Serviços"
-      );
-      atendimentos[message.from] = true;
-    } if (message.body.toLowerCase() === "opcoes" || message.body.toLowerCase() === "opções") {
-      client
-        .sendText(
+    // validar inicio do atendimento
+    if (atendimentos[message.from] !== true) {
+      if (horioAtendimento()) {
+        await client.sendText(
           message.from,
-          "Olá, aqui é a Luna, assistente comercial do Grupo Saint Paul.\n\n1️⃣ - Para Boletos\n2️⃣ - Informações de IPTU\n3️⃣ - Relatórios de Imposto de Renda\n4️⃣ - Cálculos de Quitação\n5️⃣ - Acordos de parcelas em atraso\n6️⃣ - Informações de atendimento\n7️⃣ - Outros Serviços"
+          "Olá, aqui é a Luna, assistente comercial do Grupo Saint Paul.\nEm que posso ajudar?\n\n1️⃣ - Cessão de Direitos\n2️⃣ - Autorização para Escritura\n3️⃣ - Contratos\n4️⃣ - Unificação e Desmembramento de Lotes\n5️⃣ - Aditivos e Notas Devolutivas\n6️⃣ - Outros Serviços"
         )
+          .then((result) => {
+            console.log("Result: ", result); //return object successd
+          })
+          .catch((erro) => {
+            console.error("Error when sending: ", erro); //return object error
+          });
+        console.log(atendimentos);
+        atendimentos[message.from] = true;
+      } else {
+        await client.sendText(
+          message.from,
+          "Desculpe, nosso horário de atendimento é de *8h00* até *18h00* de *segunda* a *sexta*\nPor favor retorne em horário comercial. Desde já, agradecemos o seu contato."
+        );
+        atendimentos[message.from] = true;
+        setTimeout(() => {
+          delete atendimentos[message.from];
+        }, 60 * 30 * 1000);
+      }
     }
-    // Processa a mensagem do cliente
-    if (message.body) {
+    if (message.body && horioAtendimento()) {
       switch (message.body) {
         case "1":
         case "2":
@@ -86,7 +104,7 @@ function start(client) {
           await waitForMessage(client, message.from);
           await client.sendText(
             message.from,
-            "Pronto! Agora é só aguardar que em breve sua solicitação será atendida.\n\n Caso precise de de ajuda com outros assuntos, descreva a sua solicitação abaixou ou digite *Opções* para iniciar outro atendimento. 😉"
+            "Pronto! Agora é só aguardar que em breve sua solicitação será atendida.\n\n Caso precise de ajuda com outros assuntos, descreva a sua solicitação abaixou para nossos atendentes. 😉"
           );
           setTimeout(() => {
             delete atendimentos[message.from];
@@ -109,7 +127,7 @@ function start(client) {
           await waitForMessage(client, message.from);
           await client.sendText(
             message.from,
-            "Pronto! Agora é só aguardar que em breve sua solicitação será atendida.\n\n Caso precise de de ajuda com outros assuntos, descreva a sua solicitação abaixou ou digite *Opções* para iniciar outro atendimento. 😉"
+            "Pronto! Agora é só aguardar que em breve sua solicitação será atendida.\n\n Caso precise de ajuda com outros assuntos, descreva a sua solicitação abaixou para nossos atendentes. 😉"
           );
           setTimeout(() => {
             delete atendimentos[message.from];

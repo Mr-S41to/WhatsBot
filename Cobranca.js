@@ -32,8 +32,6 @@ wppconnect
       );
     },
     logQR: false,
-    useChrome: false,
-    headless: true,
   })
   .then((client) => start(client))
   .catch((error) => console.log(error));
@@ -49,32 +47,44 @@ function waitForMessage(client, from) {
   });
 }
 
+function horioAtendimento() {
+  var now = new Date;
+  var hora = now.getHours();
+  var dia = now.getDay();
+
+  return hora >= 8 && hora < 18 && dia >= 1 && dia <= 5;
+}
+
 function start(client) {
   client.onMessage(async (message) => {
-    // Processa a mensagem do cliente
-    if (!atendimentos[message.from]) {
-      await client
-        .sendText(
+    // validar inicio do atendimento
+    if (atendimentos[message.from] !== true) {
+      if (horioAtendimento()) {
+        await client.sendText(
           message.from,
           "Olá, aqui é a Luna, assistente de cobranças do Grupo Saint Paul.\nEm que posso ajudar?\n\n1️⃣ - Para Boletos\n2️⃣ - Informações de IPTU\n3️⃣ - Relatórios de Imposto de Renda\n4️⃣ - Cálculos de Quitação\n5️⃣ - Acordos de parcelas em atraso\n6️⃣ - Informações de atendimento\n7️⃣ - Outros Serviços"
         )
-        .then((result) => {
-          console.log("Result: ", result); //return object successd
-        })
-        .catch((erro) => {
-          console.error("Error when sending: ", erro); //return object error
-        });
-      console.log(atendimentos);
-      atendimentos[message.from] = true;
-    }
-    if (message.body.toLowerCase() === "opcoes" || message.body.toLowerCase() === "opções") {
-      client
-        .sendText(
+          .then((result) => {
+            console.log("Result: ", result); //return object successd
+          })
+          .catch((erro) => {
+            console.error("Error when sending: ", erro); //return object error
+          });
+        console.log(atendimentos);
+        atendimentos[message.from] = true;
+      } else {
+        await client.sendText(
           message.from,
-          "Olá, aqui é a Luna, assistente de cobranças do Grupo Saint Paul.\n\n1️⃣ - Para Boletos\n2️⃣ - Informações de IPTU\n3️⃣ - Relatórios de Imposto de Renda\n4️⃣ - Cálculos de Quitação\n5️⃣ - Acordos de parcelas em atraso\n6️⃣ - Informações de atendimento\n7️⃣ - Outros Serviços"
-        )
+          "Desculpe, nosso horário de atendimento é de *8h00* até *18h00* de *segunda* a *sexta*\nPor favor retorne em horário comercial. Desde já, agradecemos o seu contato."
+        );
+        atendimentos[message.from] = true;
+        setTimeout(() => {
+          delete atendimentos[message.from];
+        }, 60 * 30 * 1000);
+      }
     }
-    if (message.body) {
+    // Processa a mensagem do cliente
+    if (message.body && horioAtendimento()) {
       let alternativa;
       switch (message.body) {
         case "1":
@@ -98,31 +108,31 @@ function start(client) {
           if (alternativa === "1") {
             await client.sendText(
               message.from,
-              "Pronto! Agora é só aguardar que em breve sua solicitação de *Boletos* 📄 será atendida.\n\nCaso precise de de ajuda com outros assuntos, descreva a sua solicitação abaixou ou digite *Opções* para iniciar outro atendimento. 😉"
+              "Pronto! Agora é só aguardar que em breve sua solicitação de *Boletos* 📄 será atendida.\n\nCaso precise de ajuda com outros assuntos, descreva a sua solicitação abaixou para nossos atendentes. 😉"
             );
           }
           if (alternativa === "2") {
             await client.sendText(
               message.from,
-              "Pronto! Agora é só aguardar que em breve sua solicitação de *Informações de IPTU* 🧾 será atendida.\n\nCaso precise de de ajuda com outros assuntos, descreva a sua solicitação abaixou ou digite *Opções* para iniciar outro atendimento. 😉"
+              "Pronto! Agora é só aguardar que em breve sua solicitação de *Informações de IPTU* 🧾 será atendida.\n\nCaso precise de ajuda com outros assuntos, descreva a sua solicitação abaixou para nossos atendentes. 😉"
             );
           }
           if (alternativa === "3") {
             await client.sendText(
               message.from,
-              "Pronto! Agora é só aguardar que em breve sua solicitação de *Relatórios de Imposto de Renda* 🦁 será atendida.\n\nCaso precise de de ajuda com outros assuntos, descreva a sua solicitação abaixou ou digite *Opções* para iniciar outro atendimento. 😉"
+              "Pronto! Agora é só aguardar que em breve sua solicitação de *Relatórios de Imposto de Renda* 🦁 será atendida.\n\nCaso precise de ajuda com outros assuntos, descreva a sua solicitação abaixou para nossos atendentes. 😉"
             );
           }
           if (alternativa === "4") {
             await client.sendText(
               message.from,
-              "Pronto! Agora é só aguardar que em breve sua solicitação de *Cálculos de Quitação* 📊 será atendida.\n\nCaso precise de de ajuda com outros assuntos, descreva a sua solicitação abaixou ou digite *Opções* para iniciar outro atendimento. 😉"
+              "Pronto! Agora é só aguardar que em breve sua solicitação de *Cálculos de Quitação* 📊 será atendida.\n\nCaso precise de ajuda com outros assuntos, descreva a sua solicitação abaixou para nossos atendentes. 😉"
             );
           }
           if (alternativa === "5") {
             await client.sendText(
               message.from,
-              "Pronto! Agora é só aguardar que em breve sua solicitação de *Acordos de parcelas em atraso* 🤝 será atendida.\n\nCaso precise de de ajuda com outros assuntos, descreva a sua solicitação abaixou ou digite *Opções* para iniciar outro atendimento. 😉"
+              "Pronto! Agora é só aguardar que em breve sua solicitação de *Acordos de parcelas em atraso* 🤝 será atendida.\n\nCaso precise de ajuda com outros assuntos, descreva a sua solicitação abaixou para nossos atendentes. 😉"
             );
           }
           setTimeout(() => {
@@ -161,7 +171,7 @@ function start(client) {
           await waitForMessage(client, message.from);
           await client.sendText(
             message.from,
-            "Pronto! Agora é só aguardar que em breve sua solicitação será atendida.\n\nCaso precise de de ajuda com outros assuntos, descreva a sua solicitação abaixou ou digite *Opções* para iniciar outro atendimento. 😉"
+            "Pronto! Agora é só aguardar que em breve sua solicitação será atendida.\n\nCaso precise de ajuda com outros assuntos, descreva a sua solicitação abaixou para nossos atendentes. 😉"
           );
           setTimeout(() => {
             delete atendimentos[message.from];
