@@ -58,7 +58,7 @@ function horioAtendimento() {
 function start(client) {
   client.onMessage(async (message) => {
     // validar inicio do atendimento
-    if (atendimentos[message.from] !== true) {
+    if (atendimentos[message.from] !== true && message.body.toLowerCase() !== "continuar") {
       if (horioAtendimento()) {
         await client.sendText(
           message.from,
@@ -84,7 +84,7 @@ function start(client) {
       }
     }
     // Processa a mensagem do cliente
-    if (message.body && horioAtendimento()) {
+    if (message.body.toLowerCase() && message.body.toLowerCase() !== "continuar" && horioAtendimento()) {
       let alternativa;
       switch (message.body) {
         case "1":
@@ -95,7 +95,7 @@ function start(client) {
           alternativa = message.body;
           await client.sendText(
             message.from,
-            "Por gentileza, *seu nome completo*?"
+             "Por gentileza, em uma mensage *seu nome completo*?"
           );
           await waitForMessage(client, message.from);
           await client.sendText(message.from, "E o *seu CPF*?");
@@ -140,7 +140,11 @@ function start(client) {
             console.log(
               `Usuário ${message.from} removido após 2.5 horas.`
             );
-          }, 2.5 * 60 * 60 * 1000);
+            client.sendText(
+              message.from,
+              "Tempo de atendimento finalizado, caso não tenha sido atendido, digite: *Continuar*."
+            );
+          }, 3.5 * 60 * 60 * 1000);
           console.log(atendimentos);
           break;
         case "6":
@@ -157,10 +161,10 @@ function start(client) {
         case "7":
           await client.sendText(
             message.from,
-            "Por gentileza, informe a solicitação que deseja fazer para prosseguirmos com o atendimento?"
+            "Por gentileza,  em uma mensagem informe a solicitação que deseja fazer para prosseguirmos com o atendimento?"
           );
           await waitForMessage(client, message.from);
-          await client.sendText(message.from, "Por gentileza, *seu nome completo*?");
+          await client.sendText(message.from,  "Por gentileza, em uma mensage *seu nome completo*?");
           await waitForMessage(client, message.from);
           await client.sendText(message.from, "E o *seu CPF*?");
           await waitForMessage(client, message.from);
@@ -175,11 +179,26 @@ function start(client) {
           );
           setTimeout(() => {
             delete atendimentos[message.from];
-          }, 2.5 * 60 * 60 * 1000);
+            client.sendText(
+              message.from,
+              "Tempo de atendimento finalizado, caso não tenha sido atendido, digite: *Continuar*."
+            );
+          }, 3.5 * 60 * 60 * 1000);
           break;
         default:
           break;
       }
+    }
+    if (message.body.toLowerCase() === "continuar") {
+      atendimentos[message.from] = true;
+      console.log("Função de continuação chamada!")
+      setTimeout(() => {
+        delete atendimentos[message.from]; 
+        client.sendText(
+          message.from,
+          "Obrigado pelo contato, caso precise de mais alguma coisa é so chamar."
+        );
+      }, 3.5 * 60 * 60 * 1000);
     } else {
       console.log("Não há mensagens de texto.")
     }
