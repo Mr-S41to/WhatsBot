@@ -2,6 +2,7 @@ const fs = require("fs");
 const wppconnect = require("@wppconnect-team/wppconnect");
 
 let atendimentos = {};
+let primeiraMsg = {}
 
 wppconnect
   .create({
@@ -58,9 +59,10 @@ function horioAtendimento() {
 function start(client) {
   client.onMessage(async (message) => {
     // validar inicio do atendimento
-    if (atendimentos[message.from] !== true && message.body.toLowerCase() !== "continuar") {
-      if (horioAtendimento()) {
-        await client.sendText(
+    primeiraMsg[message.from] = false;
+    if (atendimentos[message.from] !== true  && message.body.toLowerCase() !== "continuar") {
+      if (horioAtendimento() && primeiraMsg[message.from] === false) {
+        client.sendText(
           message.from,
           "Olá, aqui é a Luna, assistente de cobranças do Grupo Saint Paul.\nEm que posso ajudar?\n\n1️⃣ - Para Boletos\n2️⃣ - Informações de IPTU\n3️⃣ - Relatórios de Imposto de Renda\n4️⃣ - Cálculos de Quitação\n5️⃣ - Acordos de parcelas em atraso\n6️⃣ - Informações de atendimento\n7️⃣ - Outros Serviços"
         )
@@ -70,8 +72,9 @@ function start(client) {
           .catch((erro) => {
             console.error("Error when sending: ", erro); //return object error
           });
-        console.log(atendimentos);
+        primeiraMsg[message.from] = true;
         atendimentos[message.from] = true;
+        console.log(atendimentos);
       } else {
         await client.sendText(
           message.from,
@@ -95,7 +98,7 @@ function start(client) {
           alternativa = message.body;
           await client.sendText(
             message.from,
-             "Por gentileza, em uma mensage *seu nome completo*?"
+            "Por gentileza, em uma mensage *seu nome completo*?"
           );
           await waitForMessage(client, message.from);
           await client.sendText(message.from, "E o *seu CPF*?");
@@ -157,6 +160,7 @@ function start(client) {
             "Se precisar de mais algum atendimento é só chamar."
           );
           delete atendimentos[message.from];
+          delete primeiraMsg[message.from];
           break;
         case "7":
           await client.sendText(
@@ -164,7 +168,7 @@ function start(client) {
             "Por gentileza,  em uma mensagem informe a solicitação que deseja fazer para prosseguirmos com o atendimento?"
           );
           await waitForMessage(client, message.from);
-          await client.sendText(message.from,  "Por gentileza, em uma mensage *seu nome completo*?");
+          await client.sendText(message.from, "Por gentileza, em uma mensage *seu nome completo*?");
           await waitForMessage(client, message.from);
           await client.sendText(message.from, "E o *seu CPF*?");
           await waitForMessage(client, message.from);
@@ -179,6 +183,7 @@ function start(client) {
           );
           setTimeout(() => {
             delete atendimentos[message.from];
+            delete primeiraMsg[message.from];
             client.sendText(
               message.from,
               "Tempo de atendimento finalizado, caso não tenha sido atendido, digite: *Continuar*."
@@ -193,7 +198,8 @@ function start(client) {
       atendimentos[message.from] = true;
       console.log("Função de continuação chamada!")
       setTimeout(() => {
-        delete atendimentos[message.from]; 
+        delete atendimentos[message.from];
+        delete primeiraMsg[message.from];
         client.sendText(
           message.from,
           "Obrigado pelo contato, caso precise de mais alguma coisa é so chamar."
