@@ -62,7 +62,7 @@ function start(client) {
     primeiraMsg[message.from] = false;
     if (atendimentos[message.from] !== true  && message.body.toLowerCase() !== "continuar") {
       if (horioAtendimento() && primeiraMsg[message.from] === false) {
-        client.sendText(
+        await client.sendText(
           message.from,
           "Olá, aqui é a Luna, assistente de cobranças do Grupo Saint Paul.\nEm que posso ajudar?\n\n1️⃣ - Para Boletos\n2️⃣ - Informações de IPTU\n3️⃣ - Relatórios de Imposto de Renda\n4️⃣ - Cálculos de Quitação\n5️⃣ - Acordos de parcelas em atraso\n6️⃣ - Informações de atendimento\n7️⃣ - Outros Serviços"
         )
@@ -87,7 +87,7 @@ function start(client) {
       }
     }
     // Processa a mensagem do cliente
-    if (message.body.toLowerCase() && message.body.toLowerCase() !== "continuar" && horioAtendimento()) {
+    if (message.body.toLowerCase() && message.body.toLowerCase() !== "continuar" && horioAtendimento())  {
       let alternativa;
       switch (message.body) {
         case "1":
