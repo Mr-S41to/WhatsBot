@@ -4,6 +4,10 @@ const wppconnect = require("@wppconnect-team/wppconnect");
 let atendimentos = {};
 let primeiraMsg = {}
 
+const engenharia = "556283045040@c.us";
+const prefeituraAnapolis = "556239022882@c.us"
+const prefeituraBarroAlto = "556296785529@c.us"
+
 wppconnect
   .create({
     session: "sessionName",
@@ -32,7 +36,8 @@ wppconnect
         }
       );
     },
-    logQR: false
+    logQR: false,
+    whatsappVersion: 2.2413
   })
   .then((client) => start(client))
   .catch((error) => console.log(error));
@@ -59,9 +64,16 @@ function horioAtendimento() {
 function start(client) {
   client.onMessage(async (message) => {
     // validar inicio do atendimento
+
     primeiraMsg[message.from] = false;
-    if (atendimentos[message.from] !== true  && message.body.toLowerCase() !== "continuar") {
-      if (horioAtendimento() && primeiraMsg[message.from] === false) {
+    if (atendimentos[message.from] !== true && message.body.toLowerCase() !== "continuar") {
+      if (
+          horioAtendimento() && 
+          primeiraMsg[message.from] === false &&
+          message.from !== engenharia &&
+          message.from !== prefeituraAnapolis &&
+          message.from !== prefeituraBarroAlto
+        ) {
         await client.sendText(
           message.from,
           "Olá, aqui é a Luna, assistente de cobranças do Grupo Saint Paul.\nEm que posso ajudar?\n\n1️⃣ - Para Boletos\n2️⃣ - Informações de IPTU\n3️⃣ - Relatórios de Imposto de Renda\n4️⃣ - Cálculos de Quitação\n5️⃣ - Acordos de parcelas em atraso\n6️⃣ - Informações de atendimento\n7️⃣ - Outros Serviços"
@@ -76,18 +88,27 @@ function start(client) {
         atendimentos[message.from] = true;
         console.log(atendimentos);
       } else {
-        await client.sendText(
-          message.from,
-          "Desculpe, nosso horário de atendimento é de *8h00* até *18h00* de *segunda* a *sexta*\nPor favor retorne em horário comercial. Desde já, agradecemos o seu contato."
-        );
-        atendimentos[message.from] = true;
-        setTimeout(() => {
-          delete atendimentos[message.from];
-        }, 60 * 30 * 1000);
+        if (message.from !== engenharia) {
+          await client.sendText(
+            message.from,
+            "Desculpe, nosso horário de atendimento é de *8h00* até *18h00* de *segunda* a *sexta*\nPor favor retorne em horário comercial. Desde já, agradecemos o seu contato."
+          );
+          atendimentos[message.from] = true;
+          setTimeout(() => {
+            delete atendimentos[message.from];
+          }, 60 * 30 * 1000);
+        }
       }
     }
     // Processa a mensagem do cliente
-    if (message.body.toLowerCase() && message.body.toLowerCase() !== "continuar" && horioAtendimento())  {
+    if (
+        message.body.toLowerCase() && 
+        message.body.toLowerCase() !== "continuar" && 
+        horioAtendimento() && 
+        message.from !== engenharia &&
+        message.from !== prefeituraAnapolis &&
+        message.from !== prefeituraBarroAlto
+      ) {
       let alternativa;
       switch (message.body) {
         case "1":
