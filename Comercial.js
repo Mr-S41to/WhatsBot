@@ -4,7 +4,6 @@ const wppconnect = require("@wppconnect-team/wppconnect");
 let atendimentos = {};
 let primeiraMsg = {}
 
-const engenharia = "556283045040@c.us";
 const prefeituraAnapolis = "556239022882@c.us"
 const prefeituraBarroAlto = "556296785529@c.us"
 
@@ -70,7 +69,6 @@ function start(client) {
       if (
         horioAtendimento() &&
         primeiraMsg[message.from] === false &&
-        message.from !== engenharia &&
         message.from !== prefeituraAnapolis &&
         message.from !== prefeituraBarroAlto
       ) {
@@ -104,7 +102,6 @@ function start(client) {
       message.body.toLowerCase() && 
       message.body.toLowerCase() !== "continuar" && 
       horioAtendimento() && 
-      message.from !== engenharia &&
       message.from !== prefeituraAnapolis &&
       message.from !== prefeituraBarroAlto
     ) {
