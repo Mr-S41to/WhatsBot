@@ -14,3 +14,20 @@ Abra o terminal na raiz do projeto e utilize o comando `npm install`
 
 ### Compatibilidade
 Windows, local.
+
+#WhatsBot
+This project is a WhatsApp automation for the Billing and Commercial Departments of the Saint Paul Group.
+Use the WppConnect, WA-JS lib to "emulate" the Web browser in the background to run WhatsApp Web.
+
+## Starting the Project 
+**1** Install the dependencies:
+Open the terminal at the project root and use the `npm install` command
+You must have Node 20 or higher installed.
+**2** To start, use the command `node Cobranca.js` or `node + name of the file.js`.
+
+##Instructions
+**1** As time passes, it becomes necessary to change the version of WhatsApp to the current one in the code, for this see the reference [here](https://wppconnect.io/pt-BR/whatsapp-versions).
+**2** Put the current version in the following updated line: `whatsappVersion: 2.2413`
+
+### Compatibility
+Windows, location.
