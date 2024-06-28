@@ -31,7 +31,9 @@ Abra o terminal na raiz do projeto e utilize o comando `npm install`
 
 Windows, local.
 
-  
+
+
+
 
 
 This project is a WhatsApp automation for the Billing and Commercial Departments of the Saint Paul Group.
