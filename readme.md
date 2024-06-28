@@ -33,9 +33,7 @@ Windows, local.
 
 
 
-
-
-
+## WhatsBot
 This project is a WhatsApp automation for the Billing and Commercial Departments of the Saint Paul Group.
 
 Use the WppConnect, WA-JS lib to "emulate" the Web browser in the background to run WhatsApp Web.
