@@ -120,7 +120,7 @@ function start(client) {
           alternativa = message.body;
           await client.sendText(
             message.from,
-            "Por gentileza, em uma mensage *seu nome completo*?"
+            "Por gentileza, em uma mensagem *seu nome completo*?"
           );
           await waitForMessage(client, message.from);
           await client.sendText(message.from, "E o *seu CPF*?");
