@@ -67,14 +67,18 @@ function start(client) {
     primeiraMsg[message.from] = false;
     if (atendimentos[message.from] !== true && message.body.toLowerCase() !== "continuar") {
       if (
-          horioAtendimento() && 
-          primeiraMsg[message.from] === false &&
-          message.from !== prefeituraAnapolis &&
-          message.from !== prefeituraBarroAlto
-        ) {
+        horioAtendimento() &&
+        primeiraMsg[message.from] === false &&
+        message.from !== prefeituraAnapolis &&
+        message.from !== prefeituraBarroAlto
+      ) {
         await client.sendText(
           message.from,
           "Olá, aqui é a Luna, assistente de cobranças do Grupo Saint Paul.\nEm que posso ajudar?\n\n1️⃣ - Para Boletos\n2️⃣ - Informações de IPTU\n3️⃣ - Relatórios de Imposto de Renda\n4️⃣ - Cálculos de Quitação\n5️⃣ - Acordos de parcelas em atraso\n6️⃣ - Informações de atendimento\n7️⃣ - Outros Serviços"
+        )
+        client.sendText(
+          message.from,
+          "Informamos que a solicitação pode demorar para ser atendida, caso isso aconteça por gentileza, entre em contato nos telefones: (62) 3321-0095 ou no (62) 99623-0374."
         )
           .then((result) => {
             console.log("Result: ", result); //return object successd
@@ -100,12 +104,12 @@ function start(client) {
     }
     // Processa a mensagem do cliente
     if (
-        message.body.toLowerCase() && 
-        message.body.toLowerCase() !== "continuar" && 
-        horioAtendimento() && 
-        message.from !== prefeituraAnapolis &&
-        message.from !== prefeituraBarroAlto
-      ) {
+      message.body.toLowerCase() &&
+      message.body.toLowerCase() !== "continuar" &&
+      horioAtendimento() &&
+      message.from !== prefeituraAnapolis &&
+      message.from !== prefeituraBarroAlto
+    ) {
       let alternativa;
       switch (message.body) {
         case "1":
@@ -165,7 +169,7 @@ function start(client) {
               message.from,
               "Tempo de atendimento finalizado, caso não tenha sido atendido, digite: *Continuar*."
             );
-          }, 3.5 * 60 * 60 * 1000);
+          }, 6 * 60 * 60 * 1000);
           console.log(atendimentos);
           break;
         case "6":
@@ -206,7 +210,7 @@ function start(client) {
               message.from,
               "Tempo de atendimento finalizado, caso não tenha sido atendido, digite: *Continuar*."
             );
-          }, 3.5 * 60 * 60 * 1000);
+          }, 6 * 60 * 60 * 1000);
           break;
         default:
           break;
@@ -222,7 +226,7 @@ function start(client) {
           message.from,
           "Obrigado pelo contato, caso precise de mais alguma coisa é so chamar."
         );
-      }, 3.5 * 60 * 60 * 1000);
+      }, 6 * 60 * 60 * 1000);
     } else {
       console.log("Não há mensagens de texto.")
     }
