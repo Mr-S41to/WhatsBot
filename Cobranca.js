@@ -36,7 +36,7 @@ wppconnect
       );
     },
     logQR: false,
-    whatsappVersion: 2.2413
+    whatsappVersion: "2.3000.1014840070-alpha"
   })
   .then((client) => start(client))
   .catch((error) => console.log(error));
